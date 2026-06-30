@@ -232,10 +232,25 @@ public sealed class MemoryEditor : IDisposable
     /// </summary>
     public IntPtr AobScan(string pattern)
     {
+        var all = AobScanAll(pattern, max: 1);
+        return all.Count > 0 ? all[0] : IntPtr.Zero;
+    }
+
+    /// <summary>
+    /// Return up to <paramref name="max"/> matches of a byte pattern in the main
+    /// module, in ascending address order. Use this to check that a signature is
+    /// unique (exactly one match) before trusting it.
+    /// </summary>
+    public List<IntPtr> AobScanAll(string pattern, int max = 64)
+    {
         var (bytes, mask) = ParsePattern(pattern);
         int moduleSize = Process.MainModule!.ModuleMemorySize;
+        var results = new List<IntPtr>();
+        var seen = new HashSet<long>();
 
-        // Read the whole module image in chunks to bound memory use.
+        // Read the whole module image in chunks to bound memory use. Chunks overlap
+        // by (pattern length - 1) so a match straddling a boundary isn't missed; the
+        // HashSet dedupes the few re-scanned bytes in the overlap region.
         const int chunkSize = 0x100000; // 1 MB
         int overlap = bytes.Length - 1;
 
@@ -246,17 +261,26 @@ public sealed class MemoryEditor : IDisposable
             if (!ReadProcessMemory(_handle, ModuleBase + (int)offset, buffer, toRead, out var read) || (int)read < bytes.Length)
                 continue;
 
-            int idx = FindPattern(buffer, (int)read, bytes, mask);
-            if (idx >= 0)
-                return ModuleBase + (int)offset + idx;
+            int from = 0;
+            while ((from = FindPattern(buffer, (int)read, bytes, mask, from)) >= 0)
+            {
+                long abs = ModuleBase.ToInt64() + offset + from;
+                if (seen.Add(abs))
+                {
+                    results.Add(new IntPtr(abs));
+                    if (results.Count >= max)
+                        return results;
+                }
+                from++;
+            }
         }
-        return IntPtr.Zero;
+        return results;
     }
 
-    private static int FindPattern(byte[] haystack, int length, byte[] pattern, bool[] mask)
+    private static int FindPattern(byte[] haystack, int length, byte[] pattern, bool[] mask, int start = 0)
     {
         int last = length - pattern.Length;
-        for (int i = 0; i <= last; i++)
+        for (int i = start; i <= last; i++)
         {
             bool match = true;
             for (int j = 0; j < pattern.Length; j++)

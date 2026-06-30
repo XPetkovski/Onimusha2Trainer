@@ -97,17 +97,25 @@ using (mem)
     {
         var pattern = string.Join(' ', args[1..]);
         Console.WriteLine($"Scanning module for pattern:\n  {pattern}\n");
-        var hit = mem.AobScan(pattern);
-        if (hit == IntPtr.Zero)
+        var hits = mem.AobScanAll(pattern, max: 64);
+        if (hits.Count == 0)
         {
             Console.WriteLine("No match.");
         }
         else
         {
-            long rel = hit.ToInt64() - mem.ModuleBase.ToInt64();
-            Console.WriteLine($"Match at 0x{hit.ToInt64():X}  (module+0x{rel:X})");
-            if (mem.TryRead<int>(hit, out var dword))
-                Console.WriteLine($"First 4 bytes as int: {dword} (0x{(uint)dword:X8})");
+            Console.ForegroundColor = hits.Count == 1 ? ConsoleColor.Green : ConsoleColor.Yellow;
+            Console.WriteLine(hits.Count == 1
+                ? "1 match (unique — good signature):"
+                : $"{hits.Count} matches (NOT unique — narrow the pattern before using it):");
+            Console.ResetColor();
+            foreach (var hit in hits)
+            {
+                long rel = hit.ToInt64() - mem.ModuleBase.ToInt64();
+                Console.WriteLine($"  0x{hit.ToInt64():X}  (module+0x{rel:X})");
+            }
+            if (hits.Count == 64)
+                Console.WriteLine("  … (stopped at 64)");
         }
         return;
     }
