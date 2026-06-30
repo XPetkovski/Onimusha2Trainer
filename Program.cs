@@ -4,7 +4,7 @@ using Onimusha2Trainer;
 // ── Configuration ───────────────────────────────────────────────────────────
 // Real process name for the PC release (MT Framework engine). Process names may
 // contain spaces but NOT the ".exe" suffix. Confirm in Task Manager → Details.
-const string ProcessName = "Onimusha 2: Samurai's Destiny";
+const string ProcessName = "Onimusha2";
 
 // Global hotkey virtual-key codes (work even while the game has focus).
 const int VK_F1 = 0x70, VK_F2 = 0x71, VK_F3 = 0x72, VK_END = 0x23;

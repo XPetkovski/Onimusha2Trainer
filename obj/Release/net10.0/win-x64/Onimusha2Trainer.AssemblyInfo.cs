@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Onimusha2Trainer")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Release")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+bb5661209495d96f676c3b8d42116670ef6706d0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+f7676d8c15aabdb96e61f45fd697e4ea8691ecd9")]
 [assembly: System.Reflection.AssemblyProductAttribute("Onimusha2Trainer")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Onimusha2Trainer")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
