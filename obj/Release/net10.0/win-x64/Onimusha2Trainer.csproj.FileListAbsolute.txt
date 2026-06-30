@@ -200,3 +200,4 @@
 /Users/hristijanpetkovski/RiderProjects/Onimusha2Trainer/obj/Release/net10.0/win-x64/Onimusha2Trainer.pdb
 /Users/hristijanpetkovski/RiderProjects/Onimusha2Trainer/obj/Release/net10.0/win-x64/Onimusha2Trainer.genruntimeconfig.cache
 /Users/hristijanpetkovski/RiderProjects/Onimusha2Trainer/obj/Release/net10.0/win-x64/ref/Onimusha2Trainer.dll
+/Users/hristijanpetkovski/RiderProjects/Onimusha2Trainer/obj/Release/net10.0/win-x64/Onimusha2Trainer.sourcelink.json
