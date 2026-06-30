@@ -1,0 +1,13 @@
+{
+  "version": 2,
+  "dgSpecHash": "GFDynyvXzWg=",
+  "success": true,
+  "projectFilePath": "/Users/hristijanpetkovski/RiderProjects/Onimusha2Trainer/Onimusha2Trainer.csproj",
+  "expectedPackageFiles": [
+    "/Users/hristijanpetkovski/.nuget/packages/microsoft.net.illink.tasks/10.0.8/microsoft.net.illink.tasks.10.0.8.nupkg.sha512",
+    "/Users/hristijanpetkovski/.nuget/packages/microsoft.netcore.app.runtime.win-x64/10.0.8/microsoft.netcore.app.runtime.win-x64.10.0.8.nupkg.sha512",
+    "/Users/hristijanpetkovski/.nuget/packages/microsoft.aspnetcore.app.runtime.win-x64/10.0.8/microsoft.aspnetcore.app.runtime.win-x64.10.0.8.nupkg.sha512",
+    "/Users/hristijanpetkovski/.nuget/packages/microsoft.netcore.app.host.win-x64/10.0.8/microsoft.netcore.app.host.win-x64.10.0.8.nupkg.sha512"
+  ],
+  "logs": []
+}

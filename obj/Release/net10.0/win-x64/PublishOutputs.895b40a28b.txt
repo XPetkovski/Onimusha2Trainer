@@ -1,0 +1,2 @@
+/Users/hristijanpetkovski/RiderProjects/Onimusha2Trainer/publish/Onimusha2Trainer.pdb
+/Users/hristijanpetkovski/RiderProjects/Onimusha2Trainer/publish/Onimusha2Trainer.exe
