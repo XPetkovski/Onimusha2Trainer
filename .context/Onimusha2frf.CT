@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CheatTable CheatEngineTableVersion="45">
+  <CheatEntries>
+    <CheatEntry>
+      <ID>64</ID>
+      <Description>"Infinite Arrows"</Description>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>[ENABLE]
+
+aobscanmodule(hhawahawa,Onimusha2.exe,44 0F BE 79 1C 48 8B 87 C8 02 00 00 48 85 C0)
+alloc(newmem,$1000)
+
+label(code)
+label(return)
+
+newmem:
+  mov [rcx+1C], #10
+
+code:
+  movsx r15d,byte ptr [rcx+1C]
+  mov rax,[rdi+000002C8]
+  test rax,rax
+  jmp return
+
+hhawahawa:
+  jmp far newmem
+  nop
+return:
+registersymbol(hhawahawa)
+
+[DISABLE]
+
+hhawahawa:
+  db 44 0F BE 79 1C 48 8B 87 C8 02 00 00 48 85 C0
+
+unregistersymbol(hhawahawa)
+dealloc(newmem)
+</AssemblerScript>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>16273</ID>
+      <Description>"More CHEATS AVAILABLE HERE"</Description>
+      <Color>0000FF</Color>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>{$LUA}
+  if syntaxcheck then return end
+  [ENABLE]
+
+--Updated table! (Start)
+    --messageDialog('Enable Dark Mode?', mtInformation,mbYes,mbNo)
+    if messageDialog("Updated table with more cheats available!\r\n\r\nYou will need Mod Engine to get more cheats and the new updated table\r\n\r\nDownload Mod Engine?", mtConfirmation, mbYes, mbNo) ==mrYes then
+       shellExecute("https://modengine.net/threads/3852/")
+    else
+    end
+--Updated table! (End)
+  [DISABLE]
+
+</AssemblerScript>
+    </CheatEntry>
+  </CheatEntries>
+  <UserdefinedSymbols/>
+  <LuaScript>--Updated table! (Start)
+    --messageDialog('Enable Dark Mode?', mtInformation,mbYes,mbNo)
+    if messageDialog("Updated table with more cheats available!\r\n\r\nYou will need Mod Engine to get more cheats and the new updated table\r\n\r\nDownload Mod Engine?", mtConfirmation, mbYes, mbNo) ==mrYes then
+       shellExecute("https://modengine.net/threads/3852/")
+    else
+    end
+--Updated table! (End)
+
+
+
+
+
+</LuaScript>
+</CheatTable>

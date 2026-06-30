@@ -12,3 +12,4 @@
 /Users/hristijanpetkovski/RiderProjects/Onimusha2Trainer/obj/Debug/net10.0/Onimusha2Trainer.pdb
 /Users/hristijanpetkovski/RiderProjects/Onimusha2Trainer/obj/Debug/net10.0/Onimusha2Trainer.genruntimeconfig.cache
 /Users/hristijanpetkovski/RiderProjects/Onimusha2Trainer/obj/Debug/net10.0/ref/Onimusha2Trainer.dll
+/Users/hristijanpetkovski/RiderProjects/Onimusha2Trainer/obj/Debug/net10.0/Onimusha2Trainer.sourcelink.json

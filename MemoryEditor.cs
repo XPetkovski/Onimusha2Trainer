@@ -36,6 +36,22 @@ public sealed class MemoryEditor : IDisposable
     private static extern bool WriteProcessMemory(IntPtr hProcess, IntPtr lpBaseAddress,
         byte[] lpBuffer, int nSize, out IntPtr lpNumberOfBytesWritten);
 
+    [DllImport("kernel32.dll", SetLastError = true)]
+    private static extern IntPtr VirtualAllocEx(IntPtr hProcess, IntPtr lpAddress,
+        UIntPtr dwSize, uint flAllocationType, uint flProtect);
+
+    [DllImport("kernel32.dll", SetLastError = true)]
+    private static extern bool VirtualFreeEx(IntPtr hProcess, IntPtr lpAddress,
+        UIntPtr dwSize, uint dwFreeType);
+
+    [DllImport("kernel32.dll", SetLastError = true)]
+    private static extern bool VirtualProtectEx(IntPtr hProcess, IntPtr lpAddress,
+        UIntPtr dwSize, uint flNewProtect, out uint lpflOldProtect);
+
+    private const uint MEM_COMMIT_RESERVE = 0x3000;
+    private const uint MEM_RELEASE = 0x8000;
+    public const uint PAGE_EXECUTE_READWRITE = 0x40;
+
     private readonly IntPtr _handle;
 
     public Process Process { get; }
@@ -112,6 +128,58 @@ public sealed class MemoryEditor : IDisposable
         MemoryMarshal.Write(buffer, in value);
         if (!WriteProcessMemory(_handle, address, buffer, size, out _))
             throw new Win32Exception(Marshal.GetLastWin32Error(), $"WriteProcessMemory @ 0x{address:X} failed.");
+    }
+
+    public byte[] ReadBytes(IntPtr address, int count)
+    {
+        var buffer = new byte[count];
+        if (!ReadProcessMemory(_handle, address, buffer, count, out var read) || (int)read != count)
+            throw new Win32Exception(Marshal.GetLastWin32Error(), $"ReadBytes @ 0x{address:X} ({count} bytes) failed.");
+        return buffer;
+    }
+
+    public void WriteBytes(IntPtr address, byte[] data)
+    {
+        if (!WriteProcessMemory(_handle, address, data, data.Length, out var written) || (int)written != data.Length)
+            throw new Win32Exception(Marshal.GetLastWin32Error(), $"WriteBytes @ 0x{address:X} ({data.Length} bytes) failed.");
+    }
+
+    /// <summary>Allocate executable memory inside the target (a "code cave").</summary>
+    public IntPtr Alloc(int size)
+    {
+        var p = VirtualAllocEx(_handle, IntPtr.Zero, (UIntPtr)size, MEM_COMMIT_RESERVE, PAGE_EXECUTE_READWRITE);
+        if (p == IntPtr.Zero)
+            throw new Win32Exception(Marshal.GetLastWin32Error(), "VirtualAllocEx failed.");
+        return p;
+    }
+
+    public void Free(IntPtr address)
+    {
+        if (address != IntPtr.Zero)
+            VirtualFreeEx(_handle, address, UIntPtr.Zero, MEM_RELEASE);
+    }
+
+    /// <summary>Change page protection; returns the previous protection value.</summary>
+    public uint Protect(IntPtr address, int size, uint newProtect)
+    {
+        if (!VirtualProtectEx(_handle, address, (UIntPtr)size, newProtect, out var old))
+            throw new Win32Exception(Marshal.GetLastWin32Error(), $"VirtualProtectEx @ 0x{address:X} failed.");
+        return old;
+    }
+
+    /// <summary>
+    /// Build a position-independent 64-bit absolute jump (14 bytes):
+    /// <c>FF 25 00 00 00 00</c> = <c>jmp qword ptr [rip+0]</c>, followed by the
+    /// 8-byte target stored inline. Works regardless of distance to the target.
+    /// </summary>
+    public static byte[] AbsoluteJump(IntPtr target)
+    {
+        var b = new byte[14];
+        b[0] = 0xFF;
+        b[1] = 0x25; // jmp [rip+disp32], disp32 = 0
+        // b[2..5] already zero
+        BitConverter.GetBytes(target.ToInt64()).CopyTo(b, 6);
+        return b;
     }
 
     /// <summary>

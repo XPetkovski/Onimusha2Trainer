@@ -27,14 +27,43 @@ Framework and survives restarts/patches better.
 > you an archive with an `.exe` to run (fearlesscheatengine.net, cheatenginetable.net,
 > flingcheatengine.com, etc.) are SEO clones that commonly bundle malware.
 
+## What's actually wired up
+
+The FearLess `.CT` you provided contained **only one real cheat — Infinite Arrows**
+(plus an ad entry that pops a dialog pushing a "Mod Engine" download; the real
+Health/Mana/Souls cheats are gated behind that and are **not** in the file). So:
+
+| Hotkey | Cheat | Status |
+|--------|-------|--------|
+| **F4** | Infinite Arrows | ✅ wired from the table's real signature (code injection) |
+| F1 | Infinite Health | ⛔ needs a signature (none in the .CT) |
+| F2 | Infinite Magic | ⛔ needs a signature |
+| F3 | Infinite Souls | ⛔ needs a signature |
+
+F4 is the one you can test end-to-end right now. For F1–F3 you'll need to find the
+signatures in Cheat Engine yourself (Step 2) or get a fuller table.
+
+> The game is **64-bit** (`Onimusha2.exe`, MT Framework). The trainer auto-detects
+> pointer width, so this is handled.
+
+## Two cheat styles in this trainer
+
+- **Value freeze** (`Cheat`) — resolves an address and overwrites it ~60×/sec.
+  Good for health/magic/souls once you have a pointer or AOB for the *value*.
+- **Code injection** (`Injection`) — the MT Framework way: AOB-scan the *instruction*
+  that touches the value, allocate a code cave, and detour through it so the game
+  keeps the value topped up. This is how Infinite Arrows works (there's no static
+  pointer to the arrow byte; it lives at `[rcx+1C]` with `rcx` only valid at runtime).
+  Injections are auto-reverted (bytes restored, cave freed) when you press END.
+
 ## Step 1 — process name (already set)
 
 ```csharp
-const string ProcessName = "Onimusha 2 Samurai's Destiny"; // no ".exe"
+const string ProcessName = "Onimusha2"; // image name from the .CT, no ".exe"
 ```
 
-`GetProcessesByName` wants the image name (spaces OK, no `.exe`). Confirm yours in
-Task Manager → **Details**; adjust if your release differs.
+`GetProcessesByName` wants the image name (no `.exe`). Confirm in Task Manager →
+**Details**; adjust if your release differs.
 
 ## Step 2 — get the AOB signatures
 
